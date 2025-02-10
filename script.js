@@ -13,13 +13,14 @@ const gameBoard = (function (player) {
     const init = () => {
 
         fetchDOM();
+        bind();
     };
 
     const fetchDOM  = () => {
         
         const gameBoard = document.querySelector("#gameboard");
         const row = [...gameBoard.children];
-        this.buttons = [
+        this.buttonArray = [
 
             [...row[0].children],
             [...row[1].children],
@@ -27,16 +28,65 @@ const gameBoard = (function (player) {
 
         ];
 
+        console.log(this.buttonArray);
+
     };
     
-    const show = () => {
+    const bind = () => {
+        
+        this.buttonArray.forEach(buttonRow => {
+            buttonRow.forEach(button => {
+                button.addEventListener("click", playerClick);
+            });
+        });
+    }
 
-        console.log(this.buttons);
+    const playerClick = (e) => {
+        
+
+        const [i , j] = findButtonIndex(e.target);
+        updateDisplay(e.target);
+        updateGameArea(i, j);
+        console.table(gameArea);
+
+    }
+
+    const findButtonIndex = (button) => {
+
+        let iIndex;
+        let jIndex;
+
+        for(let i = 0; i < this.buttonArray.length; i++){
+
+            jIndex = this.buttonArray[i].indexOf(button);
+              
+            if(jIndex !== -1){
+                
+                iIndex = i;  
+                break;
+            }
+       
+        }
+
+        return [iIndex, jIndex];
+        
+    }
+
+    const updateGameArea = (i, j) => {
+        
+        gameArea[i][j] = "X";
+    }
+
+    const updateDisplay = (button) => {
+        
+        button.textContent = "X";
     }
 
     return {
         init,
-        show
     };
 
 })();
+
+
+gameBoard.init();
