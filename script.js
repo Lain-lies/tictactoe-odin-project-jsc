@@ -1,6 +1,6 @@
 
 
-const gameBoard = (function (player) {  
+const gameBoard = (function () {  
 
     const gameArea = [
 
@@ -31,6 +31,12 @@ const gameBoard = (function (player) {
         console.log(this.buttonArray);
 
     };
+
+    const switchPlayer = (player) => {
+        
+        this.playerMark = player;
+        
+    }
     
     const bind = () => {
         
@@ -74,19 +80,25 @@ const gameBoard = (function (player) {
 
     const updateGameArea = (i, j) => {
         
-        gameArea[i][j] = "X";
+        gameArea[i][j] = this.playerMark;
     }
 
     const updateDisplay = (button) => {
         
-        button.textContent = "X";
+        button.textContent = this.playerMark;
     }
 
     return {
+
         init,
+        switchPlayer,
+
     };
 
 })();
 
+
+const player1 = "X";
+const player2 = "O";
 
 gameBoard.init();
