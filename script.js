@@ -1,25 +1,50 @@
 
 
-const gameBoard = (function () {  
+const game = (function () {  
 
-    const gameArea = [
-
-        ["|", "|", "|"],
-        ["|", "|", "|"],
-        ["|", "|", "|"]
-        
-    ];
-    
     const init = () => {
 
         fetchDOM();
         bind();
+        showModule();
+        testPlay();
     };
 
-    const fetchDOM  = () => {
+    const createPlayer = function(name, mark){
         
-        const gameBoard = document.querySelector("#gameboard");
-        const row = [...gameBoard.children];
+        return{name, mark};
+
+    };
+
+    const player = [];
+
+    const register = (name, mark) => {
+        
+        if(player.length == 2){
+            
+            alert("Exceeded Max Players");
+            return;
+        }
+        
+        player.push(createPlayer(name, mark));
+        console.log("Added player Successfully");
+        console.log(player);
+        
+    };
+
+    const gameArea = [
+
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""]
+        
+    ]
+       
+    const fetchDOM  = () => {
+
+        this.body = document.querySelector("body");
+        this.gameBoard = document.querySelector("#gameboard");
+        const row = [...this.gameBoard.children];
         this.buttonArray = [
 
             [...row[0].children],
@@ -30,11 +55,23 @@ const gameBoard = (function () {
 
         console.log(this.buttonArray);
 
-    };
+    }
 
-    const switchPlayer = (player) => {
+    const showModule = () => {
         
-        this.playerMark = player;
+        this.body.appendChild(this.gameBoard);
+
+    }
+
+    const hideModule = () => {
+        
+        this.body.removeChild(this.gameBoard);
+        
+    }
+
+    const switchPlayer = () => {
+        
+        this.currentPlayer = 1 - this.currentPlayer;
         
     }
     
@@ -49,11 +86,14 @@ const gameBoard = (function () {
 
     const playerClick = (e) => {
         
+        if(e.target.textContent !== "") return;
 
         const [i , j] = findButtonIndex(e.target);
         updateDisplay(e.target);
         updateGameArea(i, j);
         console.table(gameArea);
+        switchPlayer();
+        determineWinner();
 
     }
 
@@ -80,114 +120,200 @@ const gameBoard = (function () {
 
     const updateGameArea = (i, j) => {
         
-        gameArea[i][j] = this.playerMark;
+        gameArea[i][j] = player[this.currentPlayer].mark;
     }
 
     const updateDisplay = (button) => {
         
-        button.textContent = this.playerMark;
+        button.textContent = player[this.currentPlayer].mark;
     }
 
     const determineWinner = () => {
         
-        //check X axis
         let winner;
         winner = checkHorizontal();
-        if(winner) return winner;
-        
-        winner = checkVertical();
-        if(winner) return winner;
+        if(winner){
+            
+            gameFinishHandler(winner);
+        }
 
-        return 0;
+        winner = checkVertical();
+        if(winner){
+
+            gameFinishHandler(winner);
+        }
+    }
+
+    const gameFinishHandler = (winner) => {
+
+        alert(`The Winner is ${winner}`);
+        hideModule();
+        control.showModule();
+        restartGame();    
+        console.log(gameArea);
 
     }
 
     const checkHorizontal = () => {
 
-        let xCount = 0;
-        let oCount = 0;
+        let player1 = 0;
+        let player2 = 0;
 
         for(let i = 0; i < gameArea.length; i++){
             
-            xCount = 0;
-            oCount = 0;
+            player1 = 0;
+            player2 = 0;
 
             for(let j = 0; j < gameArea.length; j++){
                 
-                if(gameArea[i][j] === "X"){
-                    xCount++;
+                if(gameArea[i][j] === player[0].mark){
 
-                }else if(gameArea[i][j] === "O"){
+                    player1++;
 
-                    oCount++;
+                }else if(gameArea[i][j] === player[1].mark){
+
+                    player2++;
                 }
 
             }
             
-            if(xCount === 3){
-                
-                console.log("XCOUNT");
-                return "X";
+            if(player1 === 3){
 
-            }else if(oCount === 3){
+                return player[0].name;
 
-                console.log("OCOUNT");
-                return "O";
+            }else if(player2 === 3){
+
+                return player[1].name;
             }
         }
-
-        return 0;
         
     }
 
     const checkVertical = () => {
 
-        let xCount = 0;
-        let oCount = 0;
+        let player1 = 0;
+        let player2 = 0;
 
         for(let j = 0; j < gameArea.length; j++){
 
-            xCount = 0;
-            oCount = 0;
+            player1 = 0;
+            player2 = 0;
             
             for(let i = 0; i < gameArea.length; i++){
                 
-                if(gameArea[i][j] === "X"){
+                if(gameArea[i][j] === player[0].mark){
 
-                    xCount++;
+                    player1++;
 
-                }else if(gameArea[i][j] === "O"){
+                }else if(gameArea[i][j] === player[1].mark){
 
-                    oCount++;
+                    player2++;
                 }
             }
 
-            if(xCount === 3){
+            if(player1 === 3){
                 
-                console.log("XCOUNT");
-                return "X";
+                return player[0].name;
+                
+            }else if(player2 === 3){
 
-            }else if(oCount === 3){
-
-                console.log("OCOUNT");
-                return "O";
+                return player[1].name;
             }
         }
+    }   
+
+    const testPlay = () => {
+        
+        register("ken", ":)");
+        register("lain", ":X");
+        
+        this.currentPlayer = 0;
+        
+    }
+
+    const restartGame = () => {
+        
+        console.log("restart 3gerred")
+        this.buttonArray.forEach(buttonRow => {
+            buttonRow.forEach(button => {
+                button.textContent = "";
+            });
+        });
+
+        for(let i = 0; i < gameArea.length; i++){
+            for(let j = 0; j < gameArea.length; j++){
+                
+                gameArea[i][j] = "";
+            }
+        }
+
+        this.currentPlayer = 0;
+
+        console.table(gameArea);
     }
 
     return {
 
         init,
-        switchPlayer,
-        determineWinner,
-
+        hideModule,
+        showModule,
     };
 
 })();
 
+const control = (function() {
 
-const player1 = "X";
-const player2 = "O";
+    const init = () => {
+        
+        fetchDOM();
+        bind();
+    }
 
-gameBoard.init();
-gameBoard.switchPlayer(player2);
+    const fetchDOM  = () => {
+    
+        this.body = document.querySelector("body");
+        this.control = document.querySelector("#control");
+        this.button = document.querySelector("#control > button")       
+
+        console.log(this.control);
+        console.log(this.button);
+
+    };
+
+    const bind = () => {
+        
+        this.button.addEventListener("click",startClick);
+        
+    }
+
+    const startClick = () => {
+
+        game.showModule();
+        hideModule();
+        
+    }
+
+    const showModule = () => {
+        
+        this.body.appendChild(this.control);
+    }
+
+    const hideModule = () => {
+        
+        this.body.removeChild(this.control);        
+    }
+    
+    
+    return{
+        
+        init,
+        showModule,
+        hideModule,
+
+    }
+
+})();
+
+game.init();
+control.init();
+game.hideModule();
