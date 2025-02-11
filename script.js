@@ -88,10 +88,98 @@ const gameBoard = (function () {
         button.textContent = this.playerMark;
     }
 
+    const determineWinner = () => {
+        
+        //check X axis
+        let winner;
+        winner = checkHorizontal();
+        if(winner) return winner;
+        
+        winner = checkVertical();
+        if(winner) return winner;
+
+        return 0;
+
+    }
+
+    const checkHorizontal = () => {
+
+        let xCount = 0;
+        let oCount = 0;
+
+        for(let i = 0; i < gameArea.length; i++){
+            
+            xCount = 0;
+            oCount = 0;
+
+            for(let j = 0; j < gameArea.length; j++){
+                
+                if(gameArea[i][j] === "X"){
+                    xCount++;
+
+                }else if(gameArea[i][j] === "O"){
+
+                    oCount++;
+                }
+
+            }
+            
+            if(xCount === 3){
+                
+                console.log("XCOUNT");
+                return "X";
+
+            }else if(oCount === 3){
+
+                console.log("OCOUNT");
+                return "O";
+            }
+        }
+
+        return 0;
+        
+    }
+
+    const checkVertical = () => {
+
+        let xCount = 0;
+        let oCount = 0;
+
+        for(let j = 0; j < gameArea.length; j++){
+
+            xCount = 0;
+            oCount = 0;
+            
+            for(let i = 0; i < gameArea.length; i++){
+                
+                if(gameArea[i][j] === "X"){
+
+                    xCount++;
+
+                }else if(gameArea[i][j] === "O"){
+
+                    oCount++;
+                }
+            }
+
+            if(xCount === 3){
+                
+                console.log("XCOUNT");
+                return "X";
+
+            }else if(oCount === 3){
+
+                console.log("OCOUNT");
+                return "O";
+            }
+        }
+    }
+
     return {
 
         init,
         switchPlayer,
+        determineWinner,
 
     };
 
@@ -102,3 +190,4 @@ const player1 = "X";
 const player2 = "O";
 
 gameBoard.init();
+gameBoard.switchPlayer(player2);
